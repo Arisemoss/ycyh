@@ -1,0 +1,19 @@
+{
+  "name": "birthday-wishing-wall",
+  "version": "1.0.0",
+  "description": "A beautiful birthday wishing wall web application deployable to Netlify",
+  "main": "index.html",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build needed for static site'"
+  },
+  "keywords": ["birthday", "wishing", "netlify", "fauna"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "faunadb": "^4.8.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}
