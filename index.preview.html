@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="温馨的生日祝福墙，为寿星送上美好的祝福">
+    <meta property="og:title" content="🎂 生日快乐！快来送上你的祝福吧">
+    <meta property="og:description" content="一个温馨的生日祝福墙，为你爱的人送上最美好的祝福">
+    <meta property="og:type" content="website">
+    <title>🎂 生日祝福墙 - 本地预览版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #ffeef8 0%, #e0f7fa 50%, #fff8e1 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            opacity: 0.8;
+            animation: confetti-fall linear forwards;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(720deg); }
+        }
+        .balloon-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            width: 40px;
+            height: 50px;
+            border-radius: 50%;
+            animation: balloon-rise 8s ease-in-out infinite;
+        }
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 30px;
+            background: #888;
+        }
+        @keyframes balloon-rise {
+            0% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-50vh) rotate(5deg); }
+            100% { transform: translateY(-120vh) rotate(-5deg); }
+        }
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            text-align: center;
+            padding: 30px 0;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #e91e63;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .subtitle {
+            color: #888;
+            font-size: 1rem;
+        }
+        .card-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #ffd54f;
+        }
+        .card::before {
+            content: '🎂';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 4rem;
+            opacity: 0.1;
+        }
+        .card-hat {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+        }
+        .card-sender {
+            font-weight: bold;
+            color: #e91e63;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            padding-top: 20px;
+        }
+        .card-content {
+            font-size: 1.3rem;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .card-time {
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        .soup-container {
+            background: linear-gradient(135deg, #fff9c4 0%, #fffde7 100%);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .soup-text {
+            font-size: 0.95rem;
+            color: #795548;
+            font-style: italic;
+            text-align: center;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-next {
+            background: linear-gradient(135deg, #ff6b9d 0%, #e91e63 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(233, 30, 99, 0.4);
+        }
+        .btn-next:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(233, 30, 99, 0.5);
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #7c4dff 0%, #536dfe 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(83, 109, 254, 0.4);
+        }
+        .btn-add:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(83, 109, 254, 0.5);
+        }
+        .stats {
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 20px;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modal-in 0.3s ease;
+        }
+        @keyframes modal-in {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-title {
+            font-size: 1.5rem;
+            color: #e91e63;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #e91e63;
+        }
+        .form-input:disabled {
+            background: #f5f5f5;
+            color: #999;
+        }
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .anonymous-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .switch {
+            width: 50px;
+            height: 26px;
+            background: #ddd;
+            border-radius: 13px;
+            position: relative;
+            transition: background 0.3s;
+        }
+        .switch::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .switch.on {
+            background: #e91e63;
+        }
+        .switch.on::after {
+            transform: translateX(24px);
+        }
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .btn-submit {
+            flex: 1;
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            color: white;
+        }
+        .btn-cancel {
+            flex: 1;
+            background: #f5f5f5;
+            color: #666;
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 10px;
+            z-index: 200;
+            display: none;
+            animation: toast-in 0.3s ease;
+        }
+        .toast.show {
+            display: block;
+        }
+        @keyframes toast-in {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #e91e63;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888;
+        }
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        .preview-badge {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #ff6b9d;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+        @media (max-width: 480px) {
+            h1 { font-size: 1.6rem; }
+            .card { padding: 20px; }
+            .card-content { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-badge">📱 本地预览版</div>
+    <div class="confetti-container" id="confettiContainer"></div>
+    <div class="balloon-container" id="balloonContainer"></div>
+    <div class="container">
+        <header>
+            <h1 id="mainTitle">🎂 祝亲爱的朋友生日快乐！🎉</h1>
+            <p class="subtitle">每一条祝福都是一份温暖</p>
+        </header>
+        <div class="card-container">
+            <div id="cardContent">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>加载中...</p>
+                </div>
+            </div>
+        </div>
+        <div class="button-container">
+            <button class="btn btn-next" id="btnNext">🎁 下一条祝福</button>
+            <button class="btn btn-add" id="btnAdd">✨ 我要送祝福</button>
+        </div>
+        <div class="stats" id="stats"></div>
+    </div>
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2 class="modal-title">💝 送上你的祝福</h2>
+            <div class="form-group">
+                <label class="form-label">你的网名</label>
+                <input type="text" class="form-input" id="nickname" placeholder="留下你的名字让寿星知道是谁在祝福">
+            </div>
+            <div class="form-group">
+                <label class="anonymous-switch">
+                    <div class="switch" id="anonymousSwitch"></div>
+                    <span>🎭 匿名发送</span>
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="form-label">祝福内容 *</label>
+                <textarea class="form-input form-textarea" id="content" placeholder="写下你对寿星的美好祝福..."></textarea>
+            </div>
+            <div class="form-buttons">
+                <button class="btn btn-cancel" id="btnCancel">取消</button>
+                <button class="btn btn-submit" id="btnSubmit">发送祝福 🎉</button>
+            </div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <script>
+        const SOUP_LIST = [
+            "✨ 今天的努力是幸运的伏笔，当下的付出是明日的花开。",
+            "💖 把烦恼丢进夕阳里，把快乐装进星光中。",
+            "🌟 生活明朗，万物可爱，未来可期。",
+            "💫 愿你眼里有光，心中有爱，一路春暖花开。",
+            "🌸 每一个不曾起舞的日子，都是对生命的辜负。",
+            "🌻 愿你像向日葵一样，永远朝着阳光生长。",
+            "🌈 风雨过后，一定会有美丽的彩虹。",
+            "🌺 做自己的太阳，无需凭借谁的光。",
+            "🍀 愿你每一天都充满惊喜和美好。",
+            "🎀 好好生活，慢慢相遇，一切都在路上。",
+            "🎈 Keep your face always toward the sunshine, and shadows will fall behind you.",
+            "⭐ The best is yet to come.",
+            "💎 Every day is a new beginning.",
+            "🦋 Life is what you make it.",
+            "🌙 Dream big and dare to fail.",
+            "🌷 愿你被世界温柔以待。",
+            "🍃 心若浮沉，浅笑安然。",
+            "🌼 时光不负努力，青春不负自己。",
+            "🌊 保持热爱，奔赴山海。",
+            "🎯 知足且上进，温柔且坚定。",
+            "🍭 生活很甜，你也是。",
+            "🎨 把生活过成自己喜欢的样子。",
+            "🎪 要开心，要快乐，你是最棒的！",
+            "🎡 每天都要元气满满呀！",
+            "🎠 愿你遍历山河，仍觉人间值得。",
+            "🎢 人生百味，愿你微笑面对。",
+            "🎬 生活这部电影，要做自己的主角。",
+            "🎹 奏响属于自己的人生乐章。",
+            "🎸 愿你眼里有星辰，心中有大海。",
+            "🎺 愿你在未来的日子里，眼里有光，笑里全是坦荡。"
+        ];
+        const SENSITIVE_WORDS = [
+            'fuck', 'shit', 'bitch', 'asshole', 'bastard', 'damn', 'cunt', 'dick', 'pussy',
+            '傻逼', '草泥马', '操你妈', '日你妈', '狗日的', '傻逼', '操蛋', '去死', '滚蛋', '混蛋',
+            'nigger', 'chink', 'retard', 'faggot', 'spic',
+            '脑残', '弱智', '白痴', '废物',
+            '赚钱', '兼职', '加微信', '加qq', '加好友', '扫码', '二维码', '推广', '广告',
+            'sex', 'porn', '色情', '赌博', '博彩', '毒品', '枪支'
+        ];
+        const SAMPLE_MESSAGES = [
+            { id: '1', nickname: '小天使', content: '生日快乐呀！愿你每天都开开心心！', time: new Date(Date.now() - 3600000).toISOString(), anonymous: false },
+            { id: '2', nickname: '匿名', content: '祝寿星永远年轻貌美，心想事成！', time: new Date(Date.now() - 7200000).toISOString(), anonymous: true },
+            { id: '3', nickname: '好朋友', content: '愿你每一个生日都有美好的回忆！🎂', time: new Date(Date.now() - 86400000).toISOString(), anonymous: false },
+            { id: '4', nickname: '神秘人', content: '新的一岁，愿你收获更多的幸福和快乐！', time: new Date(Date.now() - 172800000).toISOString(), anonymous: true }
+        ];
+        
+        let messages = [];
+        let currentIndex = 0;
+        let isAnonymous = false;
+        let currentName = '亲爱的朋友';
+        
+        function loadMessages() {
+            const stored = localStorage.getItem('birthdayMessages');
+            if (stored) {
+                messages = JSON.parse(stored);
+            } else {
+                messages = [...SAMPLE_MESSAGES];
+                localStorage.setItem('birthdayMessages', JSON.stringify(messages));
+            }
+            if (messages.length > 0) {
+                currentIndex = Math.floor(Math.random() * messages.length);
+                renderCard();
+                updateStats();
+            } else {
+                renderEmptyState();
+            }
+        }
+        
+        function addMessageToStorage(message) {
+            messages.unshift(message);
+            localStorage.setItem('birthdayMessages', JSON.stringify(messages));
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const name = urlParams.get('name');
+            if (name) {
+                currentName = name;
+                updateTitle();
+            }
+            loadMessages();
+            createConfetti();
+            createBalloons();
+            bindEvents();
+        });
+        
+        function updateTitle() {
+            document.getElementById('mainTitle').textContent = `🎂 祝${currentName}生日快乐！🎉`;
+            document.title = `🎂 祝${currentName}生日快乐！`;
+        }
+        
+        function bindEvents() {
+            document.getElementById('btnNext').addEventListener('click', nextMessage);
+            document.getElementById('btnAdd').addEventListener('click', showModal);
+            document.getElementById('btnCancel').addEventListener('click', hideModal);
+            document.getElementById('btnSubmit').addEventListener('click', submitMessage);
+            document.getElementById('anonymousSwitch').addEventListener('click', toggleAnonymous);
+            document.getElementById('modalOverlay').addEventListener('click', (e) => {
+                if (e.target.id === 'modalOverlay') hideModal();
+            });
+        }
+        
+        function renderCard() {
+            const message = messages[currentIndex];
+            const soup = getRandomSoup();
+            document.getElementById('cardContent').innerHTML = `
+                <div class="card">
+                    <div class="card-hat">🎂</div>
+                    <div class="card-sender">
+                        ${message.anonymous ? '🎭 匿名' : '💝 ' + escapeHtml(message.nickname)}
+                    </div>
+                    <div class="card-content">${escapeHtml(message.content)}</div>
+                    <div class="card-time">${formatTime(message.time)}</div>
+                    <div class="soup-container">
+                        <div class="soup-text">${soup}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function renderEmptyState() {
+            document.getElementById('cardContent').innerHTML = `
+                <div class="card">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🎉</div>
+                        <p>还没有祝福哦</p>
+                        <p style="font-size: 0.9rem; margin-top: 10px;">成为第一个送祝福的人吧！</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('stats').textContent = '';
+        }
+        
+        function nextMessage() {
+            if (messages.length === 0) return;
+            currentIndex = (currentIndex + 1) % messages.length;
+            renderCard();
+        }
+        
+        function updateStats() {
+            document.getElementById('stats').textContent = `已有 ${messages.length} 条祝福`;
+        }
+        
+        function showModal() {
+            document.getElementById('modalOverlay').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function hideModal() {
+            document.getElementById('modalOverlay').classList.remove('show');
+            document.body.style.overflow = '';
+            document.getElementById('nickname').value = '';
+            document.getElementById('content').value = '';
+            if (isAnonymous) toggleAnonymous();
+        }
+        
+        function toggleAnonymous() {
+            isAnonymous = !isAnonymous;
+            const switchEl = document.getElementById('anonymousSwitch');
+            const nicknameEl = document.getElementById('nickname');
+            if (isAnonymous) {
+                switchEl.classList.add('on');
+                nicknameEl.disabled = true;
+                nicknameEl.value = '您将匿名发送';
+            } else {
+                switchEl.classList.remove('on');
+                nicknameEl.disabled = false;
+                nicknameEl.value = '';
+                nicknameEl.placeholder = '留下你的名字让寿星知道是谁在祝福';
+            }
+        }
+        
+        function filterSensitiveWords(text) {
+            if (!text) return { clean: '', hasSensitive: false };
+            const normalizedText = text.toLowerCase()
+                .replace(/\\s+/g, '')
+                .replace(/[@#$%^&*()_+=-\\[\\]{};':"\\\\|,.<>\\/?]/g, '')
+                .replace(/@/g, 'a')
+                .replace(/0/g, 'o')
+                .replace(/1/g, 'i')
+                .replace(/3/g, 'e')
+                .replace(/4/g, 'a')
+                .replace(/5/g, 's')
+                .replace(/6/g, 'g')
+                .replace(/7/g, 't')
+                .replace(/8/g, 'b')
+                .replace(/9/g, 'g');
+            let hasSensitive = false;
+            for (const word of SENSITIVE_WORDS) {
+                if (normalizedText.includes(word.toLowerCase())) {
+                    hasSensitive = true;
+                    break;
+                }
+            }
+            return { clean: text, hasSensitive };
+        }
+        
+        function submitMessage() {
+            const nickname = document.getElementById('nickname').value.trim();
+            const content = document.getElementById('content').value.trim();
+            if (!content) {
+                showToast('请输入祝福内容');
+                return;
+            }
+            const nicknameFilter = filterSensitiveWords(nickname);
+            const contentFilter = filterSensitiveWords(content);
+            if (nicknameFilter.hasSensitive || contentFilter.hasSensitive) {
+                showToast('祝福中包含不当词汇，请修改');
+                return;
+            }
+            const newMessage = {
+                id: Date.now().toString(),
+                nickname: isAnonymous ? '匿名' : (nickname || '神秘人'),
+                content: content,
+                time: new Date().toISOString(),
+                anonymous: isAnonymous
+            };
+            addMessageToStorage(newMessage);
+            currentIndex = 0;
+            renderCard();
+            updateStats();
+            hideModal();
+            const soup = getRandomSoup();
+            showToast(`祝福发送成功！🎁\\n${soup}`, 3000);
+            createConfettiBurst();
+        }
+        
+        function getRandomSoup() {
+            return SOUP_LIST[Math.floor(Math.random() * SOUP_LIST.length)];
+        }
+        
+        function showToast(message, duration = 2000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), duration);
+        }
+        
+        function formatTime(timeStr) {
+            const time = new Date(timeStr);
+            const now = new Date();
+            const diff = now - time;
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            if (seconds < 60) return '刚刚';
+            if (minutes < 60) return `${minutes}分钟前`;
+            if (hours < 24) return `${hours}小时前`;
+            if (days < 7) return `${days}天前`;
+            return time.toLocaleDateString('zh-CN');
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function createConfetti() {
+            const colors = ['#e91e63', '#ffc107', '#2196f3', '#4caf50', '#9c27b0', '#ff5722'];
+            const container = document.getElementById('confettiContainer');
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (3 + Math.random() * 4) + 's';
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    container.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 7000);
+                }, i * 100);
+            }
+        }
+        
+        function createConfettiBurst() {
+            const colors = ['#e91e63', '#ffc107', '#2196f3', '#4caf50', '#9c27b0', '#ff5722'];
+            const container = document.getElementById('confettiContainer');
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (2 + Math.random() * 3) + 's';
+                container.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+        
+        function createBalloons() {
+            const colors = ['#e91e63', '#2196f3', '#4caf50', '#ffc107'];
+            const container = document.getElementById('balloonContainer');
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const balloon = document.createElement('div');
+                    balloon.className = 'balloon';
+                    balloon.style.left = (10 + i * 12) + '%';
+                    balloon.style.backgroundColor = colors[i % colors.length];
+                    balloon.style.animationDelay = (i * 1) + 's';
+                    container.appendChild(balloon);
+                }, i * 1000);
+            }
+            setInterval(() => {
+                const balloon = document.createElement('div');
+                balloon.className = 'balloon';
+                balloon.style.left = Math.random() * 80 + 10 + '%';
+                balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                container.appendChild(balloon);
+                setTimeout(() => balloon.remove(), 8000);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
