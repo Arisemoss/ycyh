@@ -136,6 +136,9 @@
             margin-bottom: 15px;
             padding-top: 20px;
         }
+        .card-sender.anonymous {
+            color: #9c27b0;
+        }
         .card-content {
             font-size: 1.3rem;
             line-height: 1.6;
@@ -326,6 +329,10 @@
             z-index: 200;
             display: none;
             animation: toast-in 0.3s ease;
+            white-space: pre-wrap;
+            text-align: center;
+            max-width: 90%;
+            line-height: 1.5;
         }
         .toast.show {
             display: block;
@@ -533,12 +540,13 @@
         function renderCard() {
             const message = messages[currentIndex];
             const soup = getRandomSoup();
+            const isAnonymous = message.anonymous;
+            const senderDisplay = isAnonymous ? '🎭 匿名用户' : '💝 ' + escapeHtml(message.nickname);
+            const senderClass = isAnonymous ? 'card-sender anonymous' : 'card-sender';
             document.getElementById('cardContent').innerHTML = `
                 <div class="card">
                     <div class="card-hat">🎂</div>
-                    <div class="card-sender">
-                        ${message.anonymous ? '🎭 匿名' : '💝 ' + escapeHtml(message.nickname)}
-                    </div>
+                    <div class="${senderClass}">${senderDisplay}</div>
                     <div class="card-content">${escapeHtml(message.content)}</div>
                     <div class="card-time">${formatTime(message.time)}</div>
                     <div class="soup-container">
@@ -602,9 +610,9 @@
         
         function filterSensitiveWords(text) {
             if (!text) return { clean: '', hasSensitive: false };
-            const normalizedText = text.toLowerCase()
+            let normalizedText = text.toLowerCase()
                 .replace(/\s+/g, '')
-                .replace(/[@#$%^&*()_+=\-[\]{};':"\\|,.<>/?]/g, '')
+                .replace(/[@#$%^&*()_+=`[\]{};':"\\|,.<>/?]/g, '')
                 .replace(/@/g, 'a')
                 .replace(/0/g, 'o')
                 .replace(/1/g, 'i')
