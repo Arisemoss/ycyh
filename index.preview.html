@@ -603,8 +603,8 @@
         function filterSensitiveWords(text) {
             if (!text) return { clean: '', hasSensitive: false };
             const normalizedText = text.toLowerCase()
-                .replace(/\\s+/g, '')
-                .replace(/[@#$%^&*()_+=-\\[\\]{};':"\\\\|,.<>\\/?]/g, '')
+                .replace(/\s+/g, '')
+                .replace(/[@#$%^&*()_+=\-[\]{};':"\\|,.<>/?]/g, '')
                 .replace(/@/g, 'a')
                 .replace(/0/g, 'o')
                 .replace(/1/g, 'i')
@@ -651,7 +651,7 @@
             updateStats();
             hideModal();
             const soup = getRandomSoup();
-            showToast(`祝福发送成功！🎁\\n${soup}`, 3000);
+            showToast(`祝福发送成功！🎁\n${soup}`, 3000);
             createConfettiBurst();
         }
         
